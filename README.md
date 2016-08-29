@@ -1,10 +1,10 @@
 Window to Remote Datasource 
-  - a middle layer between a data source and frontend - a disposable alternative for pagination
+  - a middle layer between a data source and frontend - a disposable infinite-scroll handler
 
 This library handles the boilerplate of 
  - left and right data scrolls using only .next() and .previous() functions
  - scaling buffer and demands according to scaled dataset (start with 10 wide and go to 100 wide)
- - in-browser buffer of data for infinite-scroll-like functionality
+ - in-browser buffer of data
  - demanding only data not already available
  - handling edge cases - start of data/end of data
 
