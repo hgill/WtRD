@@ -1,0 +1,26 @@
+{
+  "name": "wtrd",
+  "version": "0.0.1",
+  "description": "Window to Remote Datasource - a data index/movement handler for continuous lists - provides a disposable substitute for pagination",
+  "main": "WtRD.js",
+  "scripts": {
+    "test": "node tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hgill/waitered.git"
+  },
+  "keywords": [
+    "pagination",
+    "remote",
+    "datasource",
+    "middle",
+    "layer"
+  ],
+  "author": "hgill@github",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hgill/waitered/issues"
+  },
+  "homepage": "https://github.com/hgill/waitered#readme"
+}
