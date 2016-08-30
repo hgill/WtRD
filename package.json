@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hgill/waitered.git"
+    "url": "git+https://github.com/hgill/wtrd.git"
   },
   "keywords": [
     "pagination",
@@ -20,7 +20,7 @@
   "author": "hgill@github",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hgill/waitered/issues"
+    "url": "https://github.com/hgill/wtrd/issues"
   },
-  "homepage": "https://github.com/hgill/waitered#readme"
+  "homepage": "https://github.com/hgill/wtrd#readme"
 }

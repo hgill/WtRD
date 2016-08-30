@@ -1,7 +1,7 @@
 Window to Remote Datasource 
   - a middle layer between a data source and frontend - a disposable infinite-scroll handler
 
-This library handles the boilerplate of 
+Handles the boilerplate of 
  - left and right data scrolls using only .next() and .previous() functions
  - scaling buffer and demands according to scaled dataset (start with 10 wide and go to 100 wide)
  - in-browser buffer of data
@@ -10,4 +10,6 @@ This library handles the boilerplate of
 
 Use cases: 
  - Quickly changing underlying datasource without changing mid and front(e.g. searches)
- - Same data, multiple representations(e.g. one WtRD for view finder, one for a chart) 
+ - Same data, multiple representations(e.g. one WtRD for view finder, one for a chart)
+
+API: See tests.js

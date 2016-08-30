@@ -3,8 +3,8 @@
     let _ = require("lodash");
     let test = require("tape");
 
-    let DataSourceWindow = require("dsw").DataSourceWindow;
-    let ut = require("dsw").Util;
+    let DataSourceWindow = require("./WtRD").DataSourceWindow;
+    let ut = require("./WtRD.js").Util;
 
     let source = {
       get: (downRng) => {
