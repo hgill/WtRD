@@ -1,5 +1,4 @@
 'use strict';
-console.clear();
 let _=require("lodash");
 /*
   WSE: With Side Effects

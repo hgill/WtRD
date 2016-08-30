@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/hgill/wtrd/issues"
   },
-  "homepage": "https://github.com/hgill/wtrd#readme"
+  "homepage": "https://github.com/hgill/wtrd#readme",
+  "dependencies": {
+    "lodash": "^4.15.0"
+  }
 }
