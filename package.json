@@ -1,6 +1,6 @@
 {
   "name": "wtrd",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Window to Remote Datasource - a data index/movement handler for continuous lists - provides a disposable substitute for pagination",
   "main": "WtRD.js",
   "scripts": {
