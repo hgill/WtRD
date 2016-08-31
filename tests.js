@@ -3,8 +3,8 @@
     let _ = require("lodash");
     let test = require("tape");
 
-    let DataSourceWindow = require("./WtRD").DataSourceWindow;
-    let ut = require("./WtRD.js").Util;
+    let wtrd = require("wtrd").wtrd;
+    let ut = require("wtrd").Util;
 
     let source = {
       get: (downRng) => {
@@ -23,7 +23,7 @@
     };
 
 
-    let DSW = new DataSourceWindow().config({
+    let DSW = new wtrd().config({
       datalen: 10,
       /* Start absolute, will change when requests change */
       bufferlen: 10,

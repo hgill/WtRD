@@ -41,7 +41,7 @@ function safeGetWSE(obj){
             }
 
             if (!Util.checkRng(obj) || !Util.checkRng(sourceRng))
-             throw Error("DataSourceWindow INPUT Error: Bad input to rangeFix");
+             throw Error("wtrd INPUT Error: Bad input to rangeFix");
           
             obj = Util.rangeFix(obj, sourceRng); //FIRST DATA CHECK & EDGEFIX
             let start = obj.start,
@@ -49,7 +49,7 @@ function safeGetWSE(obj){
               objexplode = Util.breakRng(obj),
               retval,downRng;
           
-            if (!_.isEmpty(objexplode[1])) throw Error("DataSourceWindow INPUT Error: Bad input to .get");
+            if (!_.isEmpty(objexplode[1])) throw Error("wtrd INPUT Error: Bad input to .get");
 
             if ((end-start) !== config.datalen) {
               config.datalen=end-start;
@@ -88,13 +88,13 @@ function safeGetWSE(obj){
                   start: start - config.bufferlen,
                   end: end + config.bufferlen
                 };break;
-              default: throw Error("DataSourceWindow Logic Error: Should not have happened");
+              default: throw Error("wtrd Logic Error: Should not have happened");
             } 
           
           
             if (!_.isEmpty(downRng)) {
               //downRng only has outer right now, will add except part now:
-              if (!Util.checkRng(downRng) || !Util.checkRng(sourceRng)) throw Error("DataSourceWindow Logic Error: Bad input to rangeFix");
+              if (!Util.checkRng(downRng) || !Util.checkRng(sourceRng)) throw Error("wtrd Logic Error: Bad input to rangeFix");
           
               downRng = Util.rangeFix(downRng, sourceRng);
               let downObj = Util.breakRng(downRng)[0];
@@ -121,7 +121,7 @@ function safeGetWSE(obj){
                 retval= getUpFromAvailWSE(this,obj);break;
               
               case !emptyChk1 && emptyChk2://CASE ERROR: async up, no fetch
-                throw Error("DataSourceWindow Logic Error: This block should never execute");break;
+                throw Error("wtrd Logic Error: This block should never execute");break;
               
               case !emptyChk1 && !emptyChk2://CASE 2: async up, fetch
                 this.downRng(downRng);
@@ -150,7 +150,7 @@ function safeGetWSE(obj){
 
   function updateAvailWSE(dsw,d){
     if(!(_.has(d,'asked') && _.has(d,'value') &&  Util.checkRng(d.asked)))
-      throw Error("DataSourceWindow Logic Error: Bad input to updateAvailWSE");
+      throw Error("wtrd Logic Error: Bad input to updateAvailWSE");
 
     let availableData=dsw.availableData() || [];
     //Lift D:
@@ -190,7 +190,7 @@ function safeGetWSE(obj){
     if(_.isEmpty(dsw.availableData())) return _.noop();
 
     if(!_.isEmpty(_.difference(Util.breakRng(obj)[0],dsw.availableData().map(d=>d.index)))) 
-      throw Error("DataSourceWindow Logic error: Asked not available in mem");
+      throw Error("wtrd Logic error: Asked not available in mem");
 
     dsw.upRng(obj);//For next/previous
     
@@ -255,7 +255,7 @@ let Util = {//Pure Functions
   }
 }
 
-class DataSourceWindow{
+class wtrd{
   constructor(){
     this.get=safeGetWSE;
     return this;
@@ -272,7 +272,7 @@ class DataSourceWindow{
       if (!(_.isNumber(config.datalen) &&
         _.isNumber(config.bufferlen) && _.isNumber(config.bufferCursor) &&
         _.isNumber(config.delta)
-      )) throw Error("DataSourceWindow INPUT Error: Bad THIS");
+      )) throw Error("wtrd INPUT Error: Bad THIS");
 
       this.__config__=config; 
       return this;
@@ -281,7 +281,7 @@ class DataSourceWindow{
 
   dataSize(){
     if(arguments.length){
-      if (!_.isNumber(arguments[0])) throw Error("DataSourceWindow INPUT Error: Bad THIS");
+      if (!_.isNumber(arguments[0])) throw Error("wtrd INPUT Error: Bad THIS");
 
       this.__dataSize__=arguments[0];
       return this;
@@ -290,7 +290,7 @@ class DataSourceWindow{
   downAsyncFn(){
     if(arguments.length){
       if(!_.isFunction(arguments[0]))
-         throw Error("DataSourceWindow INPUT Error: Bad THIS");
+         throw Error("wtrd INPUT Error: Bad THIS");
 
       this.__downAsyncFn__=arguments[0];
       return this;
@@ -306,7 +306,7 @@ class DataSourceWindow{
         } else return true
       })
       )){ 
-        throw Error("DataSourceWindow Logic Error: Available Data doesnt contain sequence data");
+        throw Error("wtrd Logic Error: Available Data doesnt contain sequence data");
       };
 
       this.__availableData__=arguments[0];
@@ -323,7 +323,7 @@ class DataSourceWindow{
   upRng(){
     if(arguments.length){
       if(!Util.checkRng(arguments[0]))
-        throw Error("DataSourceWindow Logic Error: Bad range object");
+        throw Error("wtrd Logic Error: Bad range object");
 
       this.__upRng__=arguments[0];
       return this;
@@ -332,7 +332,7 @@ class DataSourceWindow{
   downRng(){
     if(arguments.length){
       if(!Util.checkRng(arguments[0]))
-        throw Error("DataSourceWindow Logic Error: Bad range object");
+        throw Error("wtrd Logic Error: Bad range object");
 
       this.__downRng__=arguments[0];
       return this;
@@ -343,7 +343,7 @@ class DataSourceWindow{
   availableRng(){
     if(arguments.length){
       if(!Util.checkRng(arguments[0]))
-        throw Error("DataSourceWindow Logic Error: Bad range object");
+        throw Error("wtrd Logic Error: Bad range object");
 
       this.__availableRng__=arguments[0];
       return this;
@@ -353,12 +353,12 @@ class DataSourceWindow{
   availableOldRng(){
     if(arguments.length){
       if(!Util.checkRng(arguments[0]))
-        throw Error("DataSourceWindow Logic Error: Bad range object");
+        throw Error("wtrd Logic Error: Bad range object");
 
       this.__availableOldRng__=arguments[0];
       return this;
     }else return this.__availableOldRng__;
   }
 }
-module.exports={DataSourceWindow:DataSourceWindow,
+module.exports={wtrd:wtrd,
                 Util:Util};
