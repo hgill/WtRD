@@ -1,4 +1,5 @@
 'use strict';
+console.log("In WTRD");
 let _=require("lodash");
 /*
   WSE: With Side Effects
