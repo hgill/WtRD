@@ -1,6 +1,7 @@
 'use strict';
-console.log("In WTRD");
+console.log("From WTRD: ");
 let _=require("lodash");
+console.log("From WTRD: ",_);
 /*
   WSE: With Side Effects
   Util has only Pure functions
@@ -361,5 +362,6 @@ class wtrd{
     }else return this.__availableOldRng__;
   }
 }
+console.log("From WTRD: ",wtrd,Util);
 module.exports={wtrd:wtrd,
                 Util:Util};
