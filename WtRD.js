@@ -382,7 +382,7 @@ class wtrd{
   }
 }
 console.log("WtRD exporting");
-exports={wtrd:wtrd,
+exports.default={wtrd:wtrd,
                 Util:Util};
   
 });
