@@ -363,5 +363,5 @@ class wtrd{
   }
 }
 console.log("From WTRD: ",wtrd,Util);
-module.exports={wtrd:wtrd,
+exports={wtrd:wtrd,
                 Util:Util};
