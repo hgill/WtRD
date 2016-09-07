@@ -1,5 +1,24 @@
-    'use strict';
-    console.clear();
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    console.log("exporting wtrd as amd");
+    define(["exports"], factory);
+  } else if (typeof exports !== "undefined") {
+    console.log("exporting wtrd as cjs");
+    factory(exports);
+  } else {
+    console.log("exporting wtrd as global");
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports);
+    global.actual = mod.exports;
+  }
+})(this, function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
     let _ = require("lodash");
     let test = require("tape");
 
@@ -376,4 +395,4 @@
         console.log("Total Time: ",performance.now()-now1);
       })
     });
-
+});
