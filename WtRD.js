@@ -1,8 +1,8 @@
 (function (global, factory) {
-  if (typeof define === "function" && define.amd) {
+ /* if (typeof define === "function" && define.amd) {
     console.log("exporting wtrd as amd");
     define(["exports"], factory);
-  } else if (typeof exports !== "undefined") {
+  } else */if (typeof exports !== "undefined") {
     console.log("exporting wtrd as cjs");
     factory(exports);
   } else {
