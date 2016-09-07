@@ -1,9 +1,12 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
+    console.log("exporting wtrd as amd");
     define(["exports"], factory);
   } else if (typeof exports !== "undefined") {
+    console.log("exporting wtrd as cjs");
     factory(exports);
   } else {
+    console.log("exporting wtrd as global");
     var mod = {
       exports: {}
     };
@@ -16,9 +19,8 @@
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  console.log("From WTRD: ");
 let _=require("lodash");
-console.log("From WTRD: ",_);
+
 /*
   WSE: With Side Effects
   Util has only Pure functions
