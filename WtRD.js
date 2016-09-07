@@ -381,7 +381,7 @@ class wtrd{
     }else return this.__availableOldRng__;
   }
 }
-console.log("From WTRD: ",wtrd,Util);
+console.log("WtRD exporting");
 exports.default={wtrd:wtrd,
                 Util:Util};
   
