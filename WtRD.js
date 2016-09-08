@@ -1,26 +1,24 @@
-(function (global, factory) {
-  if (typeof define === "function" && define.amd) {
-    console.log("exporting wtrd as amd");
-    define(["exports"], factory);
-  } else if (typeof exports !== "undefined") {
-    console.log("exporting wtrd as cjs");
-    factory(exports);
-  } else {
-    console.log("exporting wtrd as global");
-    var mod = {
-      exports: {}
-    };
-    factory(mod.exports);
-    global.actual = mod.exports;
-  }
-})(this, function (exports) {
-  "use strict";
+/*  
+    Using UMD template https://github.com/umdjs/umd/blob/master/templates/returnExports.js
+*/
+'use strict';
 
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-let _=require("lodash");
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['lodash'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('lodash'));
+    } else {
+        // Browser globals (root is window)
+        root.wtrd = factory(root._);
+    }
+}(this,realAction));
 
+function realAction(_){
 /*
   WSE: With Side Effects
   Util has only Pure functions
@@ -382,10 +380,5 @@ class wtrd{
   }
 }
 console.log("WtRD exporting");
-exports.default={wtrd:wtrd,
-                Util:Util};
-  
-});
-
-
-
+return {wtrd:wtrd,Util:Util};
+}
