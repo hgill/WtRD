@@ -254,7 +254,7 @@ let Util = {//Pure Functions
     if (len > range.end - range.start) len = range.end - range.start;
 
     if (rng.start < range.start) {
-      start = 0, end = len;
+      start = range.start, end = start+len;
     }
 
     if (rng.end >= range.end) {
