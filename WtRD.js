@@ -271,6 +271,15 @@ let Util = {//Pure Functions
       start: rng.start + n,
       end: rng.end + n
     };
+  },
+  toggleRng(rngOrArr){
+      if(_.isArray(rngOrArr) && rngOrArr.length===2){
+          return {start:rngOrArr[0],end:rngOrArr[1]}
+      }else if(checkRng(rngOrArr) && !_.has(rngOrArr,'except')){
+          return [rngOrArr.start,rngOrArr.end];
+      }else{
+          throw Error("wtrd input error: Bad object to toggleRng")
+      }
   }
 }
 
