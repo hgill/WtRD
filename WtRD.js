@@ -24,7 +24,6 @@ function realAction(_){
   Util has only Pure functions
 */
 function safeGetWSE(obj){
-  let entry1=(new Date()).toISOString();
   /* 
     fetch1,fetch2 are VERY IMPORTANT for FORCED SERIALIZATION
     - fetch1 keeps track of consecutive requests
@@ -70,10 +69,12 @@ function safeGetWSE(obj){
           
             if (!_.isEmpty(objexplode[1])) throw Error("wtrd INPUT Error: Bad input to .get");
 
+            /*
             if ((end-start) !== config.datalen) {
               config.datalen=end-start;
               this.config(config);
             }
+            */
           
             let asked = objexplode[0];
             let emptyChk1=_.isEmpty(_.difference(asked, availableIndices));
@@ -101,7 +102,13 @@ function safeGetWSE(obj){
           
               case emptyChk1 && !moveleft && !moveright: 
                 downRng = {};break;
-          
+              
+              case emptyChk1 && moveleft && moveright://again a resize case
+                downRng = {
+                  start: start - config.bufferlen,
+                  end: end + config.bufferlen
+                };break;
+              
               case !emptyChk1: 
                 downRng = {
                   start: start - config.bufferlen,
@@ -134,9 +141,12 @@ function safeGetWSE(obj){
           
               case emptyChk1 && !emptyChk2://CASE 1: sync up, fetch
                 this.downRng(downRng);
-                this.__fetch2__.push(Promise.resolve(this.downAsyncFn()(downRng)).then(d=>{
+                let pushval=Promise.resolve(this.downAsyncFn()(downRng)).then(d=>{
                   updateAvailWSE(this,d);
-                }));
+                }).then(()=>{
+                  this.events.publish('asyncfetch', this.availableRng());
+                });
+                this.__fetch2__.push();
                 retval= getUpFromAvailWSE(this,obj);break;
               
               case !emptyChk1 && emptyChk2://CASE ERROR: async up, no fetch
@@ -199,10 +209,11 @@ function safeGetWSE(obj){
       d1=>{
         return d1.index >= d.asked.start && d1.index < d.asked.end;
       });
-
-
-    return dsw.down(d).availableData(availableData)
+    dsw.down(d).availableData(availableData)
               .availableRng(Util.makeRng([availableData.map(d=>d.index)]))
+    dsw.events.publish('availchanged',dsw.availableRng());
+
+    return dsw.availableRng();
   }
   
   function getUpFromAvailWSE(dsw,obj){
@@ -212,12 +223,14 @@ function safeGetWSE(obj){
       throw Error("wtrd Logic error: Asked not available in mem");
 
     dsw.upRng(obj);//For next/previous
-    
-    return _(dsw.availableData()).filter(d=>{
+    let up=_(dsw.availableData()).filter(d=>{
       return d.index>=obj.start && d.index<obj.end;
     }).map(d=>{
       return d.value;
     }).value();
+    
+    dsw.events.publish('upchanged', up);
+    return up;
   }
 }
 
@@ -247,24 +260,31 @@ let Util = {//Pure Functions
     return [askedI, exceptI];
   },
   rangeFix: (rng, range) => {
-
-    let retval, start = rng.start,
-      end = rng.end,
+    let start,end,rstart,rend;
+    if(_.isArray(rng) && _.isArray(range))
+    start=rng[0],end=rng[1], rstart=range[0],rend=range[1];
+  else if(_.isObject(rng) && _.isObject(range))
+    start=rng.start,end=rng.end,rstart=range.start,rend=range.end;
+    let retval,
       len = end - start;
-    if (len > range.end - range.start) len = range.end - range.start;
+    if (len > rend-rstart) len = rend-rstart;
 
-    if (rng.start < range.start) {
-      start = range.start, end = start+len;
+    if (start<rstart) {
+      start = rstart, end = start+len;
     }
 
-    if (rng.end >= range.end) {
-      end = range.end, start = end - len;
+    if (end > rend) {
+      end = rend, start = end - len;
     }
-
+  
+  if(_.isArray(rng))
+    return [start,end];
+  else if(_.isObject(rng))
     return {
-      start: start,
-      end: end
-    };
+          start: start,
+          end: end
+        };
+  return rng;
   },
   shifter: (rng, n) => {
     return {
@@ -272,20 +292,60 @@ let Util = {//Pure Functions
       end: rng.end + n
     };
   },
-  toggleRng(rngOrArr){
-      if(_.isArray(rngOrArr) && rngOrArr.length===2){
-          return {start:rngOrArr[0],end:rngOrArr[1]}
-      }else if(Util.checkRng(rngOrArr) && !_.has(rngOrArr,'except')){
-          return [rngOrArr.start,rngOrArr.end];
-      }else{
-          throw Error("wtrd input error: Bad object to toggleRng")
-      }
+  rngToArr: (rng)=>{
+    return [rng.start,rng.end];
+  },
+
+  arrToRng: (arr)=>{
+    return {start:arr[0],end:arr[1]};
+  },
+
+  lodashtoD3Arr:(arr)=>{
+    return [arr[0],arr[1]-1];
+  },
+
+  D3toLodashArr: (arr)=>{
+    return [arr[0],arr[1]+1];
   }
 }
+
+
 
 class wtrd{
   constructor(){
     this.get=safeGetWSE;
+    this.events=/*Tiny pubsub module */
+    (function(){
+      var topics = {};
+      var hOP = topics.hasOwnProperty;
+
+      return {
+        subscribe: function(topic, listener) {
+          // Create the topic's object if not yet created
+          if(!hOP.call(topics, topic)) topics[topic] = [];
+
+          // Add the listener to queue
+          var index = topics[topic].push(listener) -1;
+
+          // Provide handle back for removal of topic
+          return {
+            remove: function() {
+              delete topics[topic][index];
+            }
+          };
+        },
+        publish: function(topic, info) {
+          // If the topic doesn't exist, or there's no listeners in queue, just leave
+          if(!hOP.call(topics, topic)) return;
+
+          // Cycle through topics queue, fire!
+          topics[topic].forEach(function(item) {
+              item(info != undefined ? info : {});
+          });
+        }
+      };
+    })();
+    /*Tiny pubsub module */
     return this;
   }
   previous(){
@@ -388,6 +448,5 @@ class wtrd{
     }else return this.__availableOldRng__;
   }
 }
-console.log("WtRD exporting");
 return {wtrd:wtrd,Util:Util};
 }
