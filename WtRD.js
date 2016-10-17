@@ -68,13 +68,6 @@ function safeGetWSE(obj){
               retval,downRng;
           
             if (!_.isEmpty(objexplode[1])) throw Error("wtrd INPUT Error: Bad input to .get");
-
-            /*
-            if ((end-start) !== config.datalen) {
-              config.datalen=end-start;
-              this.config(config);
-            }
-            */
           
             let asked = objexplode[0];
             let emptyChk1=_.isEmpty(_.difference(asked, availableIndices));
@@ -94,31 +87,13 @@ function safeGetWSE(obj){
             }
           
             switch(true){
-              case emptyChk1 && moveleft && !moveright: 
-                downRng = Util.shifter(availableRng, -config.bufferlen);break;
-          
-              case emptyChk1 && !moveleft && moveright: 
-                downRng = Util.shifter(availableRng, +config.bufferlen);break;
-          
               case emptyChk1 && !moveleft && !moveright: 
                 downRng = {};break;
-              
-              case emptyChk1 && moveleft && moveright://again a resize case
+              default: //not handling left right logic anymore
                 downRng = {
                   start: start - config.bufferlen,
                   end: end + config.bufferlen
-                };break;
-              
-              case !emptyChk1: 
-                downRng = {
-                  start: start - config.bufferlen,
-                  end: end + config.bufferlen
-                };break;
-              default: throw Error("wtrd Logic Error: Should not have happened");
-            } 
-          
-          
-            if (!_.isEmpty(downRng)) {
+                };
               //downRng only has outer right now, will add except part now:
               if (!Util.checkRng(downRng) || !Util.checkRng(sourceRng)) throw Error("wtrd Logic Error: Bad input to rangeFix");
           
@@ -129,8 +104,9 @@ function safeGetWSE(obj){
               switch(_.isEqual(except, downObj)){
                 case true: downRng = {};break;//Happens in edge case only
                 case false: downRng = Util.makeRng([downObj, except]);break;
-              }
-            }
+              };
+                break;
+             } 
           
             
             let emptyChk2=_.isEmpty(downRng);
@@ -143,10 +119,13 @@ function safeGetWSE(obj){
                 this.downRng(downRng);
                 let pushval=Promise.resolve(this.downAsyncFn()(downRng)).then(d=>{
                   updateAvailWSE(this,d);
+                  if(!(this.upRng().start>=this.availableRng().start && this.upRng().end<=this.availableRng().end)){
+                    throw Error("wtrd Logic Error:This should not happen")
+                  }
                 }).then(()=>{
                   this.events.publish('asyncfetch', this.availableRng());
                 });
-                this.__fetch2__.push();
+                //this.__fetch2__.push(pushval);
                 retval= getUpFromAvailWSE(this,obj);break;
               
               case !emptyChk1 && emptyChk2://CASE ERROR: async up, no fetch
@@ -229,7 +208,7 @@ function safeGetWSE(obj){
       return d.value;
     }).value();
     
-    dsw.events.publish('upchanged', up);
+    dsw.up(up).events.publish('upchanged', up);
     return up;
   }
 }
@@ -357,8 +336,7 @@ class wtrd{
   config(){
     if(arguments.length){
       let config=arguments[0];
-      if (!(_.isNumber(config.datalen) &&
-        _.isNumber(config.bufferlen) && _.isNumber(config.bufferCursor) &&
+      if (!(_.isNumber(config.bufferlen) && _.isNumber(config.bufferCursor) &&
         _.isNumber(config.delta)
       )) throw Error("wtrd INPUT Error: Bad THIS");
 
@@ -372,6 +350,7 @@ class wtrd{
       if (!_.isNumber(arguments[0])) throw Error("wtrd INPUT Error: Bad THIS");
 
       this.__dataSize__=arguments[0];
+      this.events.publish("dataSizeChanged",this.__dataSize__);
       return this;
     }else return this.__dataSize__;
   }
@@ -385,6 +364,40 @@ class wtrd{
     }else return this.__downAsyncFn__;
   }
   
+  up(){
+    if(arguments.length){
+      this.__up__=arguments[0];
+      return this;
+    }else return this.__up__;
+  }
+
+  upRng(){
+    if(arguments.length){
+      if(!Util.checkRng(arguments[0]))
+        throw Error("wtrd Logic Error: Bad range object");
+
+      this.__upRng__=arguments[0];
+      return this;
+    }else return this.__upRng__;
+  }
+
+  down(){
+    if(arguments.length){
+      this.__down__=arguments[0];
+      return this;
+    }else return this.__down__;
+  }
+
+  downRng(){
+    if(arguments.length){
+      if(!Util.checkRng(arguments[0]))
+        throw Error("wtrd Logic Error: Bad range object");
+
+      this.__downRng__=arguments[0];
+      return this;
+    }else return this.__downRng__;
+  }
+
   availableData(){
     if(arguments.length){
 
@@ -400,34 +413,7 @@ class wtrd{
       this.__availableData__=arguments[0];
       return this;
     }else return this.__availableData__;
-  }
-  
-  down(){
-    if(arguments.length){
-      this.__down__=arguments[0];
-      return this;
-    }else return this.__down__;
-  }
-  upRng(){
-    if(arguments.length){
-      if(!Util.checkRng(arguments[0]))
-        throw Error("wtrd Logic Error: Bad range object");
-
-      this.__upRng__=arguments[0];
-      return this;
-    }else return this.__upRng__;
-  }
-  downRng(){
-    if(arguments.length){
-      if(!Util.checkRng(arguments[0]))
-        throw Error("wtrd Logic Error: Bad range object");
-
-      this.__downRng__=arguments[0];
-      return this;
-    }else return this.__downRng__;
-  }
-
-  
+  }  
   availableRng(){
     if(arguments.length){
       if(!Util.checkRng(arguments[0]))
